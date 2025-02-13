@@ -1,7 +1,7 @@
 <?php
 class Validacao
 {
-    public $validacoes;
+    public $validacoes = [];
 
     public static function validar($regras, $dados)
     {
@@ -25,39 +25,55 @@ class Validacao
 
         return $validacao;
     }
+    private function unique($tabela, $campo, $valor)
+    {
+        if (strlen($valor) == 0) {
+            return;
+        }
+
+        $db = new Database(config('database'));
+        $resultado = $db->query(
+            query: "select * from $tabela where $campo = :valor",
+            params: ['valor' => $valor]
+        )->fetch();
+
+        if ($resultado) {
+            $this->validacoes[] = "O $campo já está sendo usado.";
+        }
+    }
 
     private function required($campo, $valor)
     {
         if (strlen($valor) == 0) {
-            $this->validacoes[] = "O $campo é obrigatorio";
+            $this->validacoes[] = "O $campo é obrigatorio.";
         }
     }
 
     private function email($campo, $valor)
     {
         if (!filter_var($valor, FILTER_VALIDATE_EMAIL)) {
-            $this->validacoes[] = "O $campo é invalido";
+            $this->validacoes[] = "O $campo é invalido.";
         }
     }
 
     private function confirmed($campo, $valor, $valorDeConfirmacao)
     {
         if ($valor != $valorDeConfirmacao) {
-            $this->validacoes[] = "Os $campo são diferentes";
+            $this->validacoes[] = "Os $campo são diferentes.";
         }
     }
 
     private function min($min, $campo, $valor)
     {
         if (strlen($valor) <= $min) {
-            $this->validacoes[] = "A $campo precisa ter no minimo $min caracteres";
+            $this->validacoes[] = "A $campo precisa ter no minimo $min caracteres.";
         }
     }
 
     private function max($max, $campo, $valor)
     {
         if (strlen($valor) > $max) {
-            $this->validacoes[] = "A $campo precisa ter no maximo $max caracteres";
+            $this->validacoes[] = "A $campo precisa ter no maximo $max caracteres.";
         }
     }
 
@@ -68,9 +84,13 @@ class Validacao
         }
     }
 
-    public function naoPassou()
+    public function naoPassou($nomeCustomizado = null)
     {
-        $_SESSION['validacoes'] = $this->validacoes;
+        $chave = 'validacoes';
+        if ($nomeCustomizado) {
+            $chave .= '_' . $nomeCustomizado;
+        }
+        flash()->push($chave, $this->validacoes);
         return sizeof($this->validacoes) > 0;
     }
 }

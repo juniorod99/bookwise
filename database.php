@@ -34,4 +34,4 @@ class Database
     }
 }
 
-$database = new Database($config['database']);
+$database = new Database(config('database'));
