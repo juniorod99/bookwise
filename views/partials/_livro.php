@@ -1,10 +1,7 @@
-<?php
-// dd($livro);
-?>
 <div class="bg-stone-900 p-2 rounded border-stone-800 border-2">
-    <div class="flex">
-        <div class="w-1/3">imagem</div>
-        <div class="space-y-1">
+    <div class="flex gap-2">
+        <div class="w-1/3"><img class="w-60 rounded" src="<?= $livro->imagem ?>" alt=""></div>
+        <div class="flex flex-col gap-1">
             <a href="livro?id=<?= $livro->id ?>" class="font-semibold hover:underline"><?= $livro->titulo ?></a>
             <div class="text-xs italic"><?= $livro->autor ?></div>
             <div class="text-xs italic"><?= str_repeat('⭐', $livro->nota_avaliacao) ?>(<?= $livro->count_avaliacoes ?> Avaliações)</div>

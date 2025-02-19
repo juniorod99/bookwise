@@ -7,6 +7,7 @@ class Livro
     public $descricao;
     public $ano_de_lancamento;
     public $usuario_id;
+    public $imagem;
     public $nota_avaliacao;
     public $count_avaliacoes;
 
@@ -15,7 +16,7 @@ class Livro
         $database = new Database(config('database'));
         return $database->query("
             select
-                l.id, l.titulo, l.autor, l.descricao, l.ano_de_lancamento,
+                l.id, l.titulo, l.autor, l.descricao, l.ano_de_lancamento, l.imagem,
                 ifnull(round(sum(a.nota) / 5.0), 0) as nota_avaliacao,
                 ifnull(count(a.id), 0) as count_avaliacoes
             from
@@ -28,6 +29,7 @@ class Livro
                 l.titulo,
                 l.autor,
                 l.descricao,
+                l.imagem,
                 l.ano_de_lancamento
             ", self::class, $params);
     }
